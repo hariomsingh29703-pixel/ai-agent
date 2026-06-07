@@ -930,6 +930,7 @@ async function generateProject() {
   thinking.classList.add('on');
   try {
     const chat = await fetch('/api/chat', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({message: prompt}) });
+    if (chat.status === 401) { window.location.href = '/login'; return; }
     const chatData = await chat.json();
     if (!chatData.response) throw new Error(chatData.error || 'AI did not respond');
     const save = await fetch('/api/projects/save', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({prompt, response: chatData.response, title: prompt.slice(0,60)}) });

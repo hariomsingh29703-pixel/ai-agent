@@ -77,6 +77,12 @@ def require_onboard(request: Request):
 @app.exception_handler(HTTPException)
 async def http_exception_handler(request: Request, exc: HTTPException):
     if exc.status_code == 307:
+        # API routes should return JSON 401, not HTML redirect
+        if request.url.path.startswith("/api/"):
+            return JSONResponse(
+                status_code=401,
+                content={"error": "Not authenticated. Please log in first."}
+            )
         if exc.detail == "Not authenticated":
             return RedirectResponse("/login")
         elif exc.detail == "Not onboarded":
