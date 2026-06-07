@@ -417,7 +417,10 @@ Rules:
             except Exception:
                 continue
                 
-        return JSONResponse(status_code=500, content={"error": "Could not parse AI response from stdout."})
+        err_msg = "Could not parse AI response from stdout."
+        if stderr:
+            err_msg += f" Details: {stderr.decode(errors='replace').strip()}"
+        return JSONResponse(status_code=500, content={"error": err_msg})
         
     except Exception as e:
         return JSONResponse(status_code=500, content={"error": f"Internal agent execution error: {str(e)}"})
