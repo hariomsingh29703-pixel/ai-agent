@@ -7,6 +7,7 @@ from fastapi import FastAPI, Request, Form, HTTPException, Depends
 from fastapi.responses import HTMLResponse, RedirectResponse, JSONResponse, FileResponse
 from fastapi.templating import Jinja2Templates
 from starlette.middleware.sessions import SessionMiddleware
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 from utils.db import NeDB, normalize_email, format_date
@@ -26,6 +27,15 @@ users_db = NeDB(os.path.join(data_dir, "users.db"))
 projects_db = NeDB(os.path.join(data_dir, "projects.db"))
 
 app = FastAPI(title="AgentFirst FastAPI Backend")
+
+# Add CORS Middleware (allow Vercel and localhost origins)
+app.add_middleware(
+    CORSMiddleware,
+    allow_origin_regex=r"https://.*\.vercel\.app|http://localhost:\d+",
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
 
 # Add Session Middleware
 app.add_middleware(
