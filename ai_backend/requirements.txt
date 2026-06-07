@@ -1,0 +1,6 @@
+langchain-groq
+langgraph
+pydantic
+python-dotenv
+playwright
+duckduckgo-search

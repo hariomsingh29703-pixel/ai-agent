@@ -71,12 +71,6 @@
   .signup-row a:hover { color:var(--accent2); }
   .error-msg { background:rgba(220,38,38,0.1); border:0.5px solid rgba(220,38,38,0.3); color:#ef4444; padding:10px 14px; border-radius:10px; font-size: 15.9px; margin-bottom:16px; display:none; }
   .error-msg.show { display:block; }
-  @media(max-width:1000px){
-}
-  @media(max-width:640px){nav{padding:0 16px}.card{padding:32px 22px 28px}}
-  .page-footer { text-align:center; padding:16px; font-size: 14.6px; color:var(--text3); border-top:0.5px solid var(--border); position:relative; z-index:1; }
-  .page-footer a { color:var(--text3); text-decoration:none; }
-  .page-footer a:hover { color:var(--text2); }
   @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
 </style>
 </head>
@@ -101,7 +95,6 @@
 
 <div class="page">
 
-
   <div class="card">
     <div class="card-accent-bar"></div>
     <div class="card-brand">
@@ -110,9 +103,9 @@
     </div>
     <hr class="divider-line">
 
-    <% if (locals.error) { %>
-      <div class="error-msg show"><%= error %></div>
-    <% } %>
+    {% if error %}
+      <div class="error-msg show">{{ error }}</div>
+    {% endif %}
 
     <div class="oauth-row">
       <a href="#" class="btn-oauth">

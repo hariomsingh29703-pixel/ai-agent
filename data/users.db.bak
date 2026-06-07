@@ -1,0 +1,3 @@
+{"firstName":"john","lastName":"doe ","email":"test@gmail.com","password":"$2b$12$iXKCWJ4T6AQGBc6.d7LeAegJz/ADkvp0xPlq1x6uFlbszB9ph9FCu","authProvider":"local","role":"other","experienceLevel":"intermediate","goals":"","onboarded":false,"createdAt":{"$$date":1779631285452},"_id":"QmW874IzZSxZf2G0"}
+{"firstName":"Saurabh","lastName":"Rajput","email":"saurabhrajput25072005@gmail.com","password":"$2b$12$BWms7Ji4aReXKTj7YPk4sOWO.Zy7Nt9AX/kQbB2M4b/t01BrQC9qu","authProvider":"local","role":"engineer","experienceLevel":"intermediate","goals":"","onboarded":true,"createdAt":{"$$date":1779630660110},"_id":"qPr5AguY0rx8gLwc"}
+{"$$indexCreated":{"fieldName":"email","unique":true,"sparse":true}}

@@ -66,7 +66,9 @@
       <div class="step">Step 1 of 1 — Create workspace</div>
       <h1>Join <span>AgentFirst</span></h1>
       <div class="subtitle">Start building AI-powered projects in seconds</div>
-      <% if (locals.error) { %><div class="error-msg"><%= error %></div><% } %>
+      {% if error %}
+        <div class="error-msg">{{ error }}</div>
+      {% endif %}
       <div class="socials">
         <button class="social-btn">🔵 Google</button>
         <button class="social-btn">⚫ GitHub</button>

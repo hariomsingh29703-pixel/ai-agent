@@ -1,19 +1,20 @@
 // Core Module
-const path = require('path');
+const path     = require('path');
 require('dotenv').config();
 
-const express = require('express');
-const session = require('express-session');
+const express  = require('express');
+const session  = require('express-session');
 const MongoDBStore = require('connect-mongodb-session')(session);
-const { default: mongoose } = require('mongoose');
-const multer = require('multer');
-const cors = require('cors');
-const helmet = require('helmet');
-const DB_PATH = process.env.MONGODB_URI || "mongodb://localhost:27017/havento";
+const multer   = require('multer');
+const cors     = require('cors');
+const helmet   = require('helmet');
+const mongoose = require('mongoose');
+const DB_PATH  = process.env.MONGODB_URI || "mongodb://localhost:27017/ai_agent_skill";
 
-const storeRouter = require("./routes/storeRouter")
-const hostRouter = require("./routes/hostRouter")
-const authRouter = require("./routes/authRouter")
+
+const { router: authRouter, requireOnboard, requireAuth } = require("./routes/authRouter");
+const { router: projectRouter } = require("./routes/projectRouter");
+const aiRouter = require("./routes/aiRoutes")
 const passwordResetRouter = require("./routes/passwordResetRoutes")
 const emailVerificationRouter = require("./routes/emailVerificationRoutes") 
 const rootDir = require("./utils/pathUtil");
@@ -25,42 +26,22 @@ const app = express();
 // Trust proxy - required for Render deployment
 app.set('trust proxy', 1);
 
+// View engine setup
+app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
 
 app.use(helmet({
   contentSecurityPolicy: false,
   crossOriginEmbedderPolicy: false
 }));
 
-const allowedOrigins = [
-  'http://localhost:5173',
-  'http://localhost:5174', 
-  'http://localhost:5175',
-  'https://havento.vercel.app',
-  process.env.FRONTEND_URL
-].filter(Boolean);
-
+// Open CORS for local development/demo — allow all origins
 app.use(cors({
-  origin: (origin, callback) => {
-    if (!origin) return callback(null, true);
-    
-    // Allow all Vercel deployments
-    if (origin.includes('vercel.app')) {
-      return callback(null, true);
-    }
-    
-    if (allowedOrigins.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
+  origin: true,
   credentials: true
 }));
 
-const store = new MongoDBStore({
-  uri: DB_PATH,
-  collection: 'sessions'
-});
 
 const randomString = (length) => {
   const characters = 'abcdefghijklmnopqrstuvwxyz';
@@ -100,18 +81,25 @@ app.use("/uploads", express.static(path.join(rootDir, 'uploads')))
 app.use("/host/uploads", express.static(path.join(rootDir, 'uploads')))
 app.use("/homes/uploads", express.static(path.join(rootDir, 'uploads')))
 
-app.use(session({
-  secret: process.env.SESSION_SECRET || "KnowledgeGate AI with Complete Coding",
-  resave: false,
-  saveUninitialized: false,
-  store,
-  cookie: {
-    maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
-    httpOnly: true,
-    secure: process.env.NODE_ENV === 'production', // true in production (HTTPS)
-    sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax' // 'none' for cross-origin
+let sessionStore;
+
+app.use((req, res, next) => {
+  const options = {
+    secret: process.env.SESSION_SECRET || "KnowledgeGate AI with Complete Coding",
+    resave: false,
+    saveUninitialized: false,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24 * 7, // 7 days
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax'
+    }
+  };
+  if (sessionStore) {
+    options.store = sessionStore;
   }
-}));
+  session(options)(req, res, next);
+});
 
 
 
@@ -125,19 +113,61 @@ app.use('/api/', apiLimiter);
 app.use(authRouter);
 app.use('/api/password-reset', passwordResetRouter);
 app.use('/api/verify-email', emailVerificationRouter);
- 
-app.use(storeRouter);
-app.use(hostRouter);
+
+// ── Landing page ──────────────────────────────────────────────────────────────
+app.get('/', (req, res) => {
+  if (req.session.isLoggedIn && req.session.user) {
+    // Logged-in users go straight to their projects
+    return res.redirect('/projects');
+  }
+  // Logged-out users see the landing page
+  res.render('index');
+});
+
+// ── Project routes (protected) ────────────────────────────────────────────────
+app.use(requireAuth);
+app.use(requireOnboard);
+app.use(projectRouter);
+app.use(aiRouter);
 
 app.use(errorsController.pageNotFound);
 
-const PORT = process.env.PORT || 3009;
+const PORT = process.env.PORT || 3010;
 
-mongoose.connect(DB_PATH).then(() => {
-  console.log('Connected to Mongo');
-  app.listen(PORT, () => {
-    console.log(`Server running on address http://localhost:${PORT}`);
-  });
-}).catch(err => {
-  console.log('Error while connecting to Mongo: ', err);
-});
+// ── DB connection with in-process fallback ────────────────────────────────────
+async function startServer() {
+  let dbUri = DB_PATH;
+
+  try {
+    await mongoose.connect(DB_PATH, { serverSelectionTimeoutMS: 5000 });
+    console.log('MongoDB Atlas connected ✓');
+    sessionStore = new MongoDBStore({
+      uri: DB_PATH,
+      collection: 'sessions'
+    });
+    sessionStore.on('error', (err) => console.error('Session store error:', err));
+  } catch (atlasErr) {
+    console.warn('⚠️  Atlas unavailable:', atlasErr.message);
+    console.log('🔄 Starting in-process MongoDB (mongodb-memory-server)...');
+    try {
+      const { MongoMemoryServer } = require('mongodb-memory-server');
+      const memServer = await MongoMemoryServer.create();
+      dbUri = memServer.getUri();
+      await mongoose.connect(dbUri);
+      console.log('✅ In-process MongoDB running at', dbUri);
+      console.log('ℹ️  Note: data will NOT persist after server restart (dev mode)');
+      sessionStore = new MongoDBStore({
+        uri: dbUri,
+        collection: 'sessions'
+      });
+      sessionStore.on('error', (err) => console.error('Session store error:', err));
+    } catch (memErr) {
+      console.error('❌ Could not start in-process MongoDB:', memErr.message);
+      console.log('Starting server without DB (session-only mode)...');
+    }
+  }
+
+  app.listen(PORT, () => console.log(`Server running on address http://localhost:${PORT}`));
+}
+
+startServer();

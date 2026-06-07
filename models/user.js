@@ -66,7 +66,12 @@ const userSchema = mongoose.Schema({
     default: false
   },
   emailVerificationOTP: String,
-  emailVerificationExpires: Date
+  emailVerificationExpires: Date,
+  // AI Agent onboarding
+  role: { type: String, enum: ['engineer','designer','product','founder','student','other'], default: 'other' },
+  goals: { type: String, default: '' },
+  experienceLevel: { type: String, enum: ['beginner','intermediate','advanced','expert'], default: 'intermediate' },
+  onboarded: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('User', userSchema);

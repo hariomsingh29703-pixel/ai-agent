@@ -136,3 +136,13 @@ sessions/
 
 # Optional: Ignore brain/artifacts directory (Gemini AI artifacts)
 .gemini/
+
+# Python Virtual Environments & Cache
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.pytest_cache/

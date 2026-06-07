@@ -1,0 +1,24 @@
+# Python
+.venv/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+
+# Environment — contains API keys (NEVER commit this!)
+.env
+
+# Playwright browser binaries
+.playwright/
+
+# Agent workspace files (generated at runtime)
+workspace/
+
+# Screenshots taken by agent
+workspace/_screenshots/
+
+# IDE
+.idea/
+.vscode/
+*.swp

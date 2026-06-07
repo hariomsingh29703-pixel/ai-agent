@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AgentFirst — Build AI Projects Instantly</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  [data-theme="dark"] {
+    --bg:#0d0d0f; --bg2:#141416; --bg3:#1c1c1f;
+    --border:rgba(255,255,255,0.07); --border2:rgba(255,255,255,0.12); --border3:rgba(255,255,255,0.22);
+    --text:#f0ede8; --text2:rgba(240,237,232,0.55); --text3:rgba(240,237,232,0.3);
+    --nav-bg:rgba(13,13,15,0.80); --shadow:0 2px 24px rgba(0,0,0,0.4);
+  }
+  [data-theme="light"] {
+    --bg:#fafaf8; --bg2:#ffffff; --bg3:#f2f1ee;
+    --border:rgba(0,0,0,0.07); --border2:rgba(0,0,0,0.12); --border3:rgba(0,0,0,0.2);
+    --text:#111110; --text2:rgba(17,17,16,0.55); --text3:rgba(17,17,16,0.35);
+    --nav-bg:rgba(250,250,248,0.85); --shadow:0 2px 24px rgba(0,0,0,0.08);
+  }
+  :root { --accent:#dc2626; --accent2:#ef4444; --serif:'Instrument Serif',Georgia,serif; --sans:'DM Sans',system-ui,sans-serif; --r:12px; --r2:20px; }
+  html { scroll-behavior: smooth; }
+  body { background:var(--bg); color:var(--text); font-family:var(--sans); font-size: 20px; line-height:1.6; overflow-x:hidden; -webkit-font-smoothing:antialiased; transition:background 0.35s,color 0.35s; }
+  a { text-decoration:none; color:inherit; }
+  nav { position:fixed; top:0; left:0; right:0; z-index:100; display:flex; align-items:center; justify-content:space-between; padding:0 32px; height:60px; background:var(--nav-bg); backdrop-filter:blur(20px); border-bottom:0.5px solid var(--border); transition:background 0.35s,border-color 0.35s; }
+  .logo { font-family:var(--serif); font-size: 38px; font-weight: 900; color:var(--text); letter-spacing:-0.02em; display:flex; align-items:center; gap:8px; }
+  .logo-dot { width:8px; height:8px; border-radius:50%; background:var(--accent); }
+  .nav-links { display:flex; align-items:center; gap:24px; }
+  .nav-links a { color:var(--text2); font-size: 20px !important; font-weight:700 !important; transition:color 0.2s; }
+  .nav-links a:hover { color:var(--text); }
+  .nav-cta { display:flex; align-items:center; gap:10px; }
+  .theme-toggle { width:38px; height:38px; border-radius:10px; border:0.5px solid var(--border2); background:var(--bg3); cursor:pointer; display:flex; align-items:center; justify-content:center; transition:all 0.2s; color:var(--text2); }
+  .theme-toggle:hover { border-color:var(--border3); color:var(--text); transform:rotate(15deg); }
+  .btn-ghost { padding:8px 20px; border-radius:8px; font-size: 20px !important; font-family:var(--sans); background:transparent; color:var(--text2); border:0.5px solid var(--border2); cursor:pointer; transition:all 0.2s; display:inline-block; font-weight:800 !important; }
+  .btn-ghost:hover { color:var(--text); border-color:var(--border3); }
+  .btn-primary { padding:8px 22px; border-radius:8px; font-size: 20px !important; font-family:var(--sans); background:var(--accent); color:#fff; border:none; cursor:pointer; transition:all 0.2s; display:inline-block; font-weight:800 !important; }
+  .btn-primary:hover { background:var(--accent2); transform:translateY(-1px); }
+  .hero { min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; padding:80px 24px 60px; position:relative; text-align:center; }
+  .hero::before { content:''; position:absolute; inset:0; z-index:0; background:radial-gradient(ellipse 800px 500px at 50% 0%,rgba(220,38,38,0.13) 0%,transparent 70%),radial-gradient(ellipse 500px 400px at 80% 50%,rgba(220,38,38,0.05) 0%,transparent 60%); transition:opacity 0.35s; }
+  [data-theme="light"] .hero::before { opacity:0.6; }
+  .hero-content { position:relative; z-index:1; max-width:760px; }
+  .powered-strip { display:inline-flex; align-items:center; gap:8px; padding:6px 16px 6px 12px; background:var(--bg3); border:0.5px solid var(--border2); border-radius:100px; margin-bottom:36px; font-size: 14.6px; color:var(--text3); animation:fadeUp 0.5s ease both; }
+  .powered-strip b { color:var(--text2); font-weight:500; }
+  .powered-strip .pdot { width:1px; height:12px; background:var(--border2); }
+  .hero h1 { font-family:var(--serif); font-size:clamp(55px, 7vw, 97px); line-height:1.05; letter-spacing:-0.02em; color:var(--text); margin-bottom:20px; animation:fadeUp 0.5s 0.1s ease both; }
+  .hero h1 em { font-style:italic; color:var(--accent); }
+  .hero-sub { font-size: 24px; font-weight:600; color:var(--text2); line-height:1.6; max-width:500px; margin:0 auto 44px; animation:fadeUp 0.5s 0.2s ease both; }
+  .search-wrap { width:100%; max-width:640px; margin:0 auto 16px; animation:fadeUp 0.5s 0.3s ease both; }
+  .search-bar { display:flex; align-items:center; background:var(--bg2); border:0.5px solid var(--border2); border-radius:14px; padding:6px 6px 6px 20px; transition:border-color 0.2s,box-shadow 0.2s; gap:12px; box-shadow:var(--shadow); }
+  .search-bar:focus-within { border-color:rgba(220,38,38,0.4); box-shadow:0 0 0 3px rgba(220,38,38,0.08); }
+  .search-bar input { flex:1; background:transparent; border:none; outline:none; color:var(--text); font-size: 20px; font-family:var(--sans); padding:8px 0; }
+  .search-bar input::placeholder { color:var(--text3); }
+  .search-bar button { flex-shrink:0; background:var(--accent); color:#fff; border:none; border-radius:10px; padding:10px 22px; font-size: 20px; font-weight:800; font-family:var(--sans); cursor:pointer; transition:all 0.2s; display:flex; align-items:center; gap:7px; white-space:nowrap; }
+  .search-bar button:hover { background:var(--accent2); }
+  .hero-hint { font-size: 18px; font-weight:500; color:var(--text3); animation:fadeUp 0.5s 0.4s ease both; display:flex; align-items:center; gap:5px; justify-content:center; }
+  .chips { display:flex; flex-wrap:wrap; justify-content:center; gap:8px; margin-top:28px; max-width:600px; animation:fadeUp 0.5s 0.5s ease both; }
+  .chip { padding:6px 14px; border-radius:100px; background:var(--bg3); border:0.5px solid var(--border2); font-size: 17px; font-weight:600; color:var(--text2); cursor:pointer; transition:all 0.2s; }
+  .chip:hover { border-color:rgba(220,38,38,0.35); color:var(--text); background:rgba(220,38,38,0.06); }
+  .floating-preview { position:absolute; z-index:0; pointer-events:none; }
+  .floating-preview.left { left:-10px; top:50%; transform:translateY(-40%) rotate(-6deg); }
+  .floating-preview.right { right:-10px; top:50%; transform:translateY(-40%) rotate(6deg); }
+  .mini-card { width:220px; background:var(--bg2); border:0.5px solid var(--border2); border-radius:var(--r2); padding:16px; animation:float 6s ease-in-out infinite; box-shadow:var(--shadow); }
+  .mini-card.right { animation-delay:-3s; }
+  .mini-card-tag { font-size: 12.2px; font-weight:600; letter-spacing:0.05em; text-transform:uppercase; padding:3px 8px; border-radius:100px; display:inline-block; margin-bottom:10px; }
+  .tag-web { background:rgba(52,168,83,0.15); color:#16a34a; }
+  .tag-ai  { background:rgba(139,92,246,0.15); color:#7c3aed; }
+  .tag-py  { background:rgba(202,138,4,0.15); color:#b45309; }
+  .tag-api { background:rgba(37,99,235,0.15); color:#1d4ed8; }
+  [data-theme="dark"] .tag-web { color:#4ade80; }
+  [data-theme="dark"] .tag-ai  { color:#a78bfa; }
+  [data-theme="dark"] .tag-py  { color:#fbbf24; }
+  [data-theme="dark"] .tag-api { color:#60a5fa; }
+  .mini-card h4 { font-size: 15.9px; font-weight:600; color:var(--text); margin-bottom:5px; }
+  .mini-card p  { font-size: 14.0px; color:var(--text2); line-height:1.5; }
+  section { padding:80px 24px; }
+  .container { max-width:1080px; margin:0 auto; }
+  .divider { border:none; border-top:0.5px solid var(--border); }
+  .section-label { font-size: 16px; letter-spacing:0.1em; text-transform:uppercase; color:var(--accent); font-weight:700; margin-bottom:14px; }
+  .section-title { font-family:var(--serif); font-size:clamp(42px, 4vw, 64px); line-height:1.1; letter-spacing:-0.02em; color:var(--text); margin-bottom:14px; }
+  .section-sub { font-size: 22px; font-weight:600; color:var(--text2); max-width:480px; line-height:1.65; }
+  .projects-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:36px; flex-wrap:wrap; gap:16px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(300px,1fr)); gap:16px; }
+  .project-card { background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--r2); padding:24px; cursor:pointer; transition:all 0.25s; position:relative; overflow:hidden; }
+  .project-card::after { content:''; position:absolute; inset:0; border-radius:var(--r2); background:radial-gradient(circle at var(--mx,50%) var(--my,50%),rgba(220,38,38,0.07) 0%,transparent 60%); opacity:0; transition:opacity 0.3s; pointer-events:none; }
+  .project-card:hover { border-color:var(--border2); transform:translateY(-2px); box-shadow:var(--shadow); }
+  .project-card:hover::after { opacity:1; }
+  .card-icon { width:44px; height:44px; border-radius:12px; display:flex; align-items:center; justify-content:center; margin-bottom:16px; flex-shrink:0; }
+  .card-icon svg { width:22px; height:22px; stroke-width:1.7; fill:none; stroke-linecap:round; stroke-linejoin:round; }
+  .card-tag { display:inline-flex; align-items:center; padding:3px 10px; border-radius:100px; font-size: 13.4px; font-weight:600; letter-spacing:0.03em; margin-bottom:12px; }
+  .project-card h3 { font-size: 22px; font-weight:700; color:var(--text); margin-bottom:8px; letter-spacing:-0.01em; }
+  .project-card p { font-size: 18px; font-weight:500; color:var(--text2); line-height:1.6; }
+  .card-arrow { position:absolute; right:20px; top:20px; width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; background:transparent; border:0.5px solid var(--border); color:var(--text3); font-size: 15.9px; transition:all 0.2s; }
+  .project-card:hover .card-arrow { background:var(--accent); border-color:var(--accent); color:#fff; transform:rotate(-45deg); }
+  .steps-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:24px; margin-top:56px; }
+  .step { padding:28px; background:var(--bg2); border:0.5px solid var(--border); border-radius:var(--r2); }
+  .step-num { font-family:var(--serif); font-size: 58.6px; color:var(--border2); line-height:1; margin-bottom:16px; font-style:italic; }
+  .step h3 { font-size: 21px; font-weight:700; color:var(--text); margin-bottom:8px; }
+  .step p  { font-size: 18px; font-weight:500; color:var(--text2); line-height:1.6; }
+  .cta-section { text-align:center; padding:100px 24px; position:relative; overflow:hidden; }
+  .cta-section::before { content:''; position:absolute; inset:0; background:radial-gradient(ellipse 700px 400px at 50% 50%,rgba(220,38,38,0.09) 0%,transparent 70%); }
+  .cta-section > * { position:relative; z-index:1; }
+  .cta-section .section-title { margin:0 auto 20px; max-width:520px; }
+  .cta-section .section-sub  { margin:0 auto 36px; text-align:center; }
+  footer { padding:32px; border-top:0.5px solid var(--border); display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+  footer p { font-size: 17px; font-weight:600; color:var(--text3); }
+  .footer-links { display:flex; gap:20px; }
+  .footer-links a { font-size: 17px; font-weight:600; color:var(--text3); transition:color 0.2s; }
+  .footer-links a:hover { color:var(--text2); }
+  @keyframes fadeUp { from{opacity:0;transform:translateY(18px)} to{opacity:1;transform:translateY(0)} }
+  @keyframes float { 0%,100%{transform:translateY(-40%) rotate(-6deg)} 50%{transform:translateY(-44%) rotate(-6deg)} }
+  @media(max-width:1100px){.floating-preview{display:none}}
+  @media(max-width:640px){nav{padding:0 16px}.nav-links{display:none}.hero h1{font-size: 51.2px}}
+</style>
+</head>
+<body>
+<nav>
+  <a href="/" class="logo" style="font-size:38px !important;font-weight:900 !important;"><div class="logo-dot"></div>AgentFirst</a>
+  <div class="nav-links">
+    <a href="/projects" style="font-size:22px !important;font-weight:800 !important;">Explore</a>
+    <a href="#" style="font-size:22px !important;font-weight:800 !important;">Docs</a>
+    <a href="#" style="font-size:22px !important;font-weight:800 !important;">Pricing</a>
+  </div>
+  <div class="nav-cta">
+    <button class="theme-toggle" id="themeBtn" title="Toggle theme" onclick="toggleTheme()">
+      <svg id="icon-sun" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+        <circle cx="12" cy="12" r="4"/><line x1="12" y1="2" x2="12" y2="5"/><line x1="12" y1="19" x2="12" y2="22"/>
+        <line x1="4.22" y1="4.22" x2="6.34" y2="6.34"/><line x1="17.66" y1="17.66" x2="19.78" y2="19.78"/>
+        <line x1="2" y1="12" x2="5" y2="12"/><line x1="19" y1="12" x2="22" y2="12"/>
+        <line x1="4.22" y1="19.78" x2="6.34" y2="17.66"/><line x1="17.66" y1="6.34" x2="19.78" y2="4.22"/>
+      </svg>
+      <svg id="icon-moon" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" style="display:none">
+        <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+      </svg>
+    </button>
+    <a href="/login" class="btn-ghost" style="font-size:22px !important;font-weight:800 !important;">Sign in</a>
+    <a href="/signup" class="btn-primary" style="font-size:22px !important;font-weight:800 !important;">Get started</a>
+  </div>
+</nav>
+
+<section class="hero">
+  <div class="floating-preview left">
+    <div class="mini-card">
+      <span class="mini-card-tag tag-web">Web App</span>
+      <h4>Calculator App</h4>
+      <p>Fully functional with HTML, CSS &amp; JavaScript operations</p>
+    </div>
+  </div>
+  <div class="floating-preview right">
+    <div class="mini-card right">
+      <span class="mini-card-tag tag-ai">AI/ML</span>
+      <h4>AI Chatbot</h4>
+      <p>Conversational AI with intent detection and smart responses</p>
+    </div>
+  </div>
+  <div class="hero-content">
+    <div class="powered-strip">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="var(--accent)" stroke="none"><path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/></svg>
+      <b>Powered by LangChain</b><div class="pdot"></div><b>Groq AI</b>
+    </div>
+    <h1>Build your next<br><em>AI Project</em></h1>
+    <p class="hero-sub">Describe what you want to build — the AI creates it instantly and saves it to your workspace.</p>
+    <div class="search-wrap">
+      <div class="search-bar">
+        <input type="text" placeholder="e.g. Build me a calculator app in HTML and CSS…" id="hero-input">
+        <button onclick="window.location='/login'">
+          <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 8h10M8 3l5 5-5 5"/></svg>
+          Generate
+        </button>
+      </div>
+    </div>
+    <div class="hero-hint">
+      <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="2" y="5" width="12" height="9" rx="1.5"/><path d="M5 5V3.5A3 3 0 0 1 11 3.5V5"/></svg>
+      Sign in to save your generated projects
+    </div>
+    <div class="chips">
+      <div class="chip" onclick="setPrompt('Build a REST API with Node.js and Express')">REST API</div>
+      <div class="chip" onclick="setPrompt('Create a data dashboard with Chart.js')">Data Dashboard</div>
+      <div class="chip" onclick="setPrompt('Build an AI chatbot with intent detection')">AI Chatbot</div>
+      <div class="chip" onclick="setPrompt('Create a web scraper with BeautifulSoup')">Web Scraper</div>
+      <div class="chip" onclick="setPrompt('Build a todo app with drag-and-drop')">Todo App</div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+<section>
+  <div class="container">
+    <div class="projects-header">
+      <div>
+        <p class="section-label">Gallery</p>
+        <h2 class="section-title">What can you build?</h2>
+        <p class="section-sub">Click any example to get started instantly after signing in.</p>
+      </div>
+      <a href="/signup" class="btn-ghost">Get started →</a>
+    </div>
+    <div class="grid" id="card-grid">
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(34,197,94,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#16a34a"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="10" y2="10"/><line x1="14" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="10" y2="14"/><line x1="14" y1="14" x2="16" y2="14"/><line x1="8" y1="18" x2="16" y2="18"/></svg>
+        </div>
+        <span class="card-tag tag-web">Web App</span>
+        <h3>Calculator App</h3>
+        <p>Fully functional calculator with HTML, CSS and JavaScript operations including history.</p>
+      </div>
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(59,130,246,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#1d4ed8"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 17.5h7M17.5 14v7"/></svg>
+        </div>
+        <span class="card-tag tag-api">Dashboard</span>
+        <h3>Data Dashboard</h3>
+        <p>Interactive charts and analytics dashboard powered by Chart.js with real-time filters.</p>
+      </div>
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(202,138,4,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#b45309"><circle cx="12" cy="12" r="9"/><path d="M12 3a15 15 0 0 1 0 18"/><path d="M3 12h18"/><path d="M12 3a15 15 0 0 0 0 18"/></svg>
+        </div>
+        <span class="card-tag tag-py">Python</span>
+        <h3>Web Scraper</h3>
+        <p>Scrape any website and export structured data to CSV with BeautifulSoup and Requests.</p>
+      </div>
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(139,92,246,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#7c3aed"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+        </div>
+        <span class="card-tag tag-ai">AI/ML</span>
+        <h3>AI Chatbot</h3>
+        <p>A conversational chatbot with intent detection, memory, and smart contextual responses.</p>
+      </div>
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(34,197,94,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#16a34a"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+        </div>
+        <span class="card-tag tag-web">Web App</span>
+        <h3>Todo App</h3>
+        <p>Beautiful responsive todo list with drag-and-drop reordering and local storage persistence.</p>
+      </div>
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(59,130,246,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#1d4ed8"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+        </div>
+        <span class="card-tag tag-api">Backend</span>
+        <h3>REST API</h3>
+        <p>Express.js REST API with full CRUD endpoints, JWT auth, and MongoDB integration.</p>
+      </div>
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(220,38,38,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#dc2626"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>
+        </div>
+        <span class="card-tag tag-web">Web App</span>
+        <h3>Portfolio Site</h3>
+        <p>Sleek, animated personal portfolio with project showcase and contact form.</p>
+      </div>
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(139,92,246,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#7c3aed"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+        </div>
+        <span class="card-tag tag-ai">AI/ML</span>
+        <h3>Image Classifier</h3>
+        <p>CNN-powered image classifier using TensorFlow with a clean web interface for uploads.</p>
+      </div>
+      <div class="project-card" onmousemove="cardGlow(this,event)" onclick="window.location='/login'">
+        <div class="card-arrow">↗</div>
+        <div class="card-icon" style="background:rgba(202,138,4,0.1)">
+          <svg viewBox="0 0 24 24" stroke="#b45309"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <span class="card-tag tag-py">Python</span>
+        <h3>Automation Script</h3>
+        <p>Schedule-based task automator with email notifications and detailed logging support.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+<section>
+  <div class="container">
+    <p class="section-label">Process</p>
+    <h2 class="section-title">From idea to code<br>in seconds</h2>
+    <p class="section-sub">No setup. No configuration. Just describe what you want and watch it appear.</p>
+    <div class="steps-grid">
+      <div class="step"><div class="step-num">01</div><h3>Describe your idea</h3><p>Write a natural language prompt describing the project, feature, or tool you want to build.</p></div>
+      <div class="step"><div class="step-num">02</div><h3>AI generates the code</h3><p>Our LangChain + Groq AI pipeline produces clean, production-ready code in seconds.</p></div>
+      <div class="step"><div class="step-num">03</div><h3>Review and refine</h3><p>Preview the output, ask for changes, and iterate until it's exactly what you envisioned.</p></div>
+      <div class="step"><div class="step-num">04</div><h3>Save to workspace</h3><p>Projects are saved to your personal workspace for easy access, versioning, and sharing.</p></div>
+    </div>
+  </div>
+</section>
+<hr class="divider">
+<div class="cta-section">
+  <p class="section-label">Get started</p>
+  <h2 class="section-title">Your next project<br>is one prompt away</h2>
+  <p class="section-sub">Join thousands of developers and creators building with AgentFirst.</p>
+  <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+    <a href="/signup" class="btn-primary" style="padding:12px 28px;font-size: 18.3px;">Start building free</a>
+    <a href="/login"  class="btn-ghost"   style="padding:12px 24px;font-size: 18.3px;">Sign in</a>
+  </div>
+</div>
+<footer>
+  <a href="/" class="logo" style="font-size: 20.7px;"><div class="logo-dot"></div>AgentFirst</a>
+  <p>© 2025 AgentFirst. All rights reserved.</p>
+  <div class="footer-links">
+    <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Docs</a>
+  </div>
+</footer>
+<script>
+  function setPrompt(t) { document.getElementById('hero-input').value=t; document.getElementById('hero-input').focus(); }
+  function cardGlow(el,e) { const r=el.getBoundingClientRect(); el.style.setProperty('--mx',((e.clientX-r.left)/r.width*100).toFixed(1)+'%'); el.style.setProperty('--my',((e.clientY-r.top)/r.height*100).toFixed(1)+'%'); }
+  function toggleTheme() { const html=document.documentElement; const isDark=html.dataset.theme==='dark'; html.dataset.theme=isDark?'light':'dark'; document.getElementById('icon-sun').style.display=isDark?'none':''; document.getElementById('icon-moon').style.display=isDark?'':'none'; }
+  const observe=(sel,delay)=>{const els=document.querySelectorAll(sel);const io=new IntersectionObserver(entries=>{entries.forEach(en=>{if(!en.isIntersecting)return;const i=[...els].indexOf(en.target);en.target.style.animationDelay=(i*delay)+'s';en.target.style.animation='fadeUp 0.5s ease both';io.unobserve(en.target);});},{threshold:0.1});els.forEach(el=>io.observe(el));};
+  observe('.project-card',0.05);
+  observe('.step',0.08);
+</script>
+</body>
+</html>

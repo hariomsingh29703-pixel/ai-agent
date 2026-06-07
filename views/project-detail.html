@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/><meta name="viewport" content="width=device-width,initial-scale=1"/>
+  <title>{{ project.title }} — AgentFirst</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet"/>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"/>
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+    :root{
+      --red:#ef4444;--red-dark:#dc2626;
+      --bg:#f5f7fb;--card:#ffffff;--border:#e5e7eb;
+      --text:#0f172a;--muted:#64748b;--soft:#f1f5f9;
+      --shadow:0 4px 24px rgba(15,23,42,.07);
+      --shadow-hover:0 12px 40px rgba(15,23,42,.13);
+      --mono:'JetBrains Mono','Courier New',monospace;
+    }
+    body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+    a{text-decoration:none;color:inherit;}
+
+    /* NAV */
+    nav{width:100%;height:68px;display:flex;align-items:center;justify-content:space-between;padding:0 32px;background:#fff;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100;box-shadow:0 1px 8px rgba(15,23,42,.05);}
+    .logo{font-size:24px;font-weight:900;letter-spacing:-1px;}.logo span{color:var(--red);}
+    .nav-links{display:flex;align-items:center;gap:4px;}
+    .nav-link{height:40px;padding:0 18px;border-radius:10px;background:transparent;color:var(--muted);font-size:20px;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;text-decoration:none;transition:.2s;}
+    .nav-link:hover{background:#fee2e2;color:var(--red);}
+    .nav-right{display:flex;align-items:center;gap:10px;}
+    .avatar{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,var(--red),var(--red-dark));color:#fff;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:14px;}
+    .logout-btn{height:38px;padding:0 18px;border:none;border-radius:10px;background:var(--red);color:#fff;font-weight:700;font-size:20px;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s;}
+    .logout-btn:hover{background:var(--red-dark);}
+
+    /* PAGE */
+    .page{max-width:1000px;margin:0 auto;padding:36px 24px 80px;}
+
+    /* BREADCRUMB */
+    .breadcrumb{display:flex;align-items:center;gap:8px;font-size:13px;color:var(--muted);margin-bottom:24px;}
+    .breadcrumb a{color:var(--muted);transition:color .15s;}.breadcrumb a:hover{color:var(--red);}
+    .breadcrumb i{font-size:9px;}
+
+    /* PROJECT HEADER CARD */
+    .project-header{background:linear-gradient(135deg,var(--red) 0%,var(--red-dark) 100%);border-radius:20px;padding:28px 30px;margin-bottom:24px;display:flex;align-items:center;justify-content:space-between;gap:16px;position:relative;overflow:hidden;box-shadow:0 8px 32px rgba(239,68,68,.25);}
+    .project-header::before{content:'';position:absolute;top:-40px;right:-40px;width:180px;height:180px;background:rgba(255,255,255,.07);border-radius:50%;}
+    .project-header::after{content:'';position:absolute;bottom:-30px;left:60px;width:120px;height:120px;background:rgba(255,255,255,.05);border-radius:50%;}
+    .project-header-left{display:flex;align-items:center;gap:16px;position:relative;z-index:1;}
+    .project-icon{width:52px;height:52px;min-width:52px;background:rgba(255,255,255,.18);border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:1.3rem;color:#fff;}
+    .project-title{color:#fff;font-size:1.35rem;font-weight:800;margin-bottom:5px;line-height:1.3;}
+    .project-meta{color:rgba(255,255,255,.65);font-size:.8rem;display:flex;align-items:center;gap:6px;}
+    .fav-btn{background:rgba(255,255,255,.15);border:1.5px solid rgba(255,255,255,.3);color:#fff;padding:9px 20px;border-radius:11px;font-size:.85rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:7px;transition:.2s;font-family:'Inter',sans-serif;position:relative;z-index:1;white-space:nowrap;}
+    .fav-btn:hover{background:rgba(255,255,255,.28);}
+    .fav-btn.active{background:#fbbf24;border-color:#fbbf24;color:#fff;}
+
+    /* PROMPT BOX */
+    .prompt-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:22px 26px;margin-bottom:20px;box-shadow:var(--shadow);}
+    .card-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:10px;display:flex;align-items:center;gap:6px;}
+    .prompt-text{font-size:.95rem;color:#374151;line-height:1.7;}
+
+    /* ACTION BAR */
+    .action-bar{display:flex;align-items:center;gap:10px;margin-bottom:24px;flex-wrap:wrap;}
+    .action-btn{height:42px;padding:0 20px;border:1.5px solid var(--border);border-radius:11px;background:var(--card);color:var(--muted);font-size:.88rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;font-family:'Inter',sans-serif;transition:.2s;text-decoration:none;box-shadow:0 1px 4px rgba(15,23,42,.04);}
+    .action-btn:hover{border-color:var(--red);color:var(--red);background:#fff5f5;}
+    .action-btn.danger:hover{border-color:#dc2626;color:#dc2626;background:#fef2f2;}
+    .ml{margin-left:auto;}
+
+    /* FILES SECTION */
+    .section-card{background:var(--card);border:1px solid var(--border);border-radius:18px;overflow:hidden;margin-bottom:22px;box-shadow:var(--shadow);}
+    .section-header{padding:18px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fafafa;}
+    .section-title-row{display:flex;align-items:center;gap:10px;}
+    .pulse-dot{width:8px;height:8px;background:#22c55e;border-radius:50%;animation:pulse 2s infinite;}
+    @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.85)}}
+    .section-label-text{font-size:15px;font-weight:800;color:var(--text);}
+    .file-pill{background:#f0fdf4;color:#16a34a;border:1px solid #bbf7d0;padding:3px 12px;border-radius:100px;font-size:12px;font-weight:700;}
+    .meta-text{font-size:12px;color:var(--muted);}
+
+    /* TABS */
+    .tab-bar{display:flex;border-bottom:1px solid var(--border);overflow-x:auto;padding:0 8px;background:#fafafa;}
+    .tab-btn{padding:13px 18px;font-size:13px;font-weight:700;color:var(--muted);cursor:pointer;border:none;background:none;border-bottom:2.5px solid transparent;white-space:nowrap;display:flex;align-items:center;gap:7px;transition:.15s;font-family:'Inter',sans-serif;}
+    .tab-btn:hover{color:var(--text);}
+    .tab-btn.active{color:var(--red);border-bottom-color:var(--red);}
+
+    /* CODE PANELS */
+    .code-panel{display:none;}
+    .code-panel.active{display:block;position:relative;}
+    .copy-panel-btn{position:absolute;top:14px;right:16px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);color:rgba(255,255,255,.8);padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;z-index:10;transition:.2s;}
+    .copy-panel-btn:hover{background:rgba(255,255,255,.22);color:#fff;}
+    pre{font-family:var(--mono);font-size:13px;line-height:1.8;white-space:pre-wrap;word-break:break-word;color:#e2e8f0;background:#0f172a;padding:26px 24px;margin:0;min-height:180px;}
+
+    /* TEXT RESPONSE */
+    .text-response{padding:28px 26px;}
+    .text-response-inner{background:linear-gradient(135deg,#fafafa,#f5f7fb);border:1px solid var(--border);border-radius:14px;padding:26px;white-space:pre-wrap;font-size:.95rem;line-height:1.85;color:#374151;font-family:'Inter',sans-serif;}
+
+    /* SUMMARY */
+    .summary-card{background:var(--card);border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:var(--shadow);}
+    .summary-header{padding:16px 24px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;background:#fafafa;}
+    .summary-header-left{display:flex;align-items:center;gap:9px;font-size:14px;font-weight:800;color:var(--text);}
+    .toggle-btn{background:none;border:1.5px solid var(--border);color:var(--muted);padding:5px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:'Inter',sans-serif;transition:.2s;}
+    .toggle-btn:hover{border-color:var(--red);color:var(--red);}
+    .summary-body{display:none;padding:22px 26px;}
+    .summary-body.open{display:block;}
+    .summary-body pre{border-radius:12px;font-size:13px;padding:20px;background:#f8fafc;color:#374151;border:1px solid var(--border);white-space:pre-wrap;font-family:'Inter',sans-serif;}
+
+    footer{text-align:center;padding:28px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);margin-top:40px;}
+    @media(max-width:640px){.project-header{flex-direction:column;align-items:flex-start;}.action-btn.ml{margin-left:0;}nav{padding:0 16px;}}
+  </style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Agent<span>First</span></div>
+  <div class="nav-links">
+    <a href="/projects" class="nav-link"><i class="fa-solid fa-folder"></i> Projects</a>
+    <a href="/favourites" class="nav-link"><i class="fa-solid fa-heart"></i> Favourites</a>
+  </div>
+  <div class="nav-right">
+    <div class="avatar">{{ userName[0].upper() if userName else 'U' }}</div>
+    <a href="/logout"><button class="logout-btn">Logout</button></a>
+  </div>
+</nav>
+
+<div class="page">
+  <!-- BREADCRUMB -->
+  <div class="breadcrumb">
+    <a href="/projects"><i class="fas fa-folder-open"></i> Projects</a>
+    <i class="fas fa-chevron-right"></i>
+    <span style="color:var(--text);font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:320px;">{{ project.title }}</span>
+  </div>
+
+  <!-- PROJECT HEADER -->
+  <div class="project-header">
+    <div class="project-header-left">
+      <div class="project-icon"><i class="fas fa-robot"></i></div>
+      <div>
+        <div class="project-title">{{ project.title }}</div>
+        <div class="project-meta">
+          <i class="fas fa-calendar-alt"></i>
+          Created {{ formattedCreatedAt }}
+        </div>
+      </div>
+    </div>
+    <button id="fav-btn" class="fav-btn {{ 'active' if project.isFavourite else '' }}" onclick="toggleFav('{{ project._id }}')">
+      <i class="fas fa-heart"></i>
+      <span id="fav-text">{{ 'Favourited' if project.isFavourite else 'Add to Favourites' }}</span>
+    </button>
+  </div>
+
+  <!-- PROMPT -->
+  <div class="prompt-card">
+    <div class="card-label"><i class="fas fa-pen-to-square"></i> Your Prompt</div>
+    <div class="prompt-text">{{ project.prompt }}</div>
+  </div>
+
+  <!-- ACTION BAR -->
+  <div class="action-bar">
+    <button class="action-btn" id="copy-all-btn" onclick="copyAll()"><i class="fas fa-copy"></i> Copy All Code</button>
+    <button class="action-btn danger" onclick="deleteProject('{{ project._id }}')"><i class="fas fa-trash"></i> Delete</button>
+    <a href="/projects" class="action-btn ml"><i class="fas fa-arrow-left"></i> Back to Projects</a>
+  </div>
+
+  <!-- FILES SECTION -->
+  <div class="section-card">
+    <div class="section-header">
+      <div class="section-title-row">
+        <div class="pulse-dot"></div>
+        <span class="section-label-text">Generated Files</span>
+        <span class="file-pill">{{ files|length }} file{{ 's' if files|length != 1 else '' }}</span>
+      </div>
+      <span class="meta-text">Generated by Groq &nbsp;·&nbsp; llama-4-scout</span>
+    </div>
+
+    {% if files|length > 0 %}
+    {% set extIcon = {'html':'fa-html5','css':'fa-css3-alt','js':'fa-js','ts':'fa-code','py':'fa-python','json':'fa-code','md':'fa-file-alt'} %}
+    <div class="tab-bar" id="file-tabs">
+      {% for f in files %}
+      <button class="tab-btn {{ 'active' if loop.first else '' }}" data-tab="{{ loop.index0 }}" onclick="switchTab({{ loop.index0 }})">
+        <i class="fab {{ extIcon[f.ext] or 'fa-file-code' }}"></i>{{ f.name }}
+      </button>
+      {% endfor %}
+    </div>
+    <div id="code-panels">
+      {% for f in files %}
+      <div class="code-panel {{ 'active' if loop.first else '' }}" id="panel-{{ loop.index0 }}">
+        <button class="copy-panel-btn" onclick="copyPanel({{ loop.index0 }})"><i class="fas fa-copy"></i> Copy</button>
+        <pre id="code-{{ loop.index0 }}">{{ f.code|e }}</pre>
+      </div>
+      {% endfor %}
+    </div>
+
+    {% else %}
+    <div class="text-response">
+      <div class="text-response-inner">{{ summaryText or project.response }}</div>
+    </div>
+    {% endif %}
+  </div>
+
+  <!-- SUMMARY -->
+  {% if files|length > 0 and summaryText %}
+  <div class="summary-card">
+    <div class="summary-header">
+      <div class="summary-header-left">
+        <i class="fas fa-comment-dots" style="color:var(--muted)"></i> AI Summary
+      </div>
+      <button class="toggle-btn" id="toggle-btn" onclick="toggleSummary()">Show</button>
+    </div>
+    <div class="summary-body" id="summary-body">
+      <pre>{{ summaryText }}</pre>
+    </div>
+  </div>
+  {% endif %}
+</div>
+
+<footer>© 2024 AgentFirst &nbsp;·&nbsp; Built with Python FastAPI, LangChain &amp; Groq</footer>
+
+<script>
+  function switchTab(idx) {
+    document.querySelectorAll('.tab-btn').forEach(function(t,j){ t.classList.toggle('active', j===idx); });
+    document.querySelectorAll('.code-panel').forEach(function(p,j){ p.classList.toggle('active', j===idx); });
+  }
+  function getCode(idx) {
+    var el = document.getElementById('code-' + idx);
+    if (!el) return '';
+    var txt = document.createElement('textarea');
+    txt.innerHTML = el.innerHTML;
+    return txt.value;
+  }
+  function copyPanel(idx) {
+    navigator.clipboard.writeText(getCode(idx)).then(function() {
+      var btn = document.querySelector('#panel-' + idx + ' .copy-panel-btn');
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function(){ btn.innerHTML = orig; }, 2000);
+    });
+  }
+  function copyAll() {
+    var panels = document.querySelectorAll('.code-panel');
+    var tabs   = document.querySelectorAll('.tab-btn');
+    var parts  = [];
+    panels.forEach(function(p,i){ var n = tabs[i]?tabs[i].textContent.trim():'file'+i; parts.push('// ── '+n+' ──\n'+getCode(i)); });
+    var all = parts.join('\n\n');
+    if (!all.trim()) { alert('No code to copy.'); return; }
+    navigator.clipboard.writeText(all).then(function(){
+      var btn = document.getElementById('copy-all-btn');
+      var orig = btn.innerHTML;
+      btn.innerHTML = '<i class="fas fa-check"></i> Copied!';
+      setTimeout(function(){ btn.innerHTML = orig; }, 2000);
+    });
+  }
+  function toggleSummary() {
+    var body = document.getElementById('summary-body');
+    var btn  = document.getElementById('toggle-btn');
+    body.classList.toggle('open');
+    btn.textContent = body.classList.contains('open') ? 'Hide' : 'Show';
+  }
+  async function toggleFav(id) {
+    var res = await fetch('/api/projects/'+id+'/favourite',{method:'POST'});
+    var d = await res.json();
+    if (d.success) {
+      var btn = document.getElementById('fav-btn');
+      var txt = document.getElementById('fav-text');
+      if (d.isFavourite) { btn.classList.add('active'); txt.textContent='Favourited'; }
+      else { btn.classList.remove('active'); txt.textContent='Add to Favourites'; }
+    }
+  }
+  async function deleteProject(id) {
+    if (!confirm('Delete this project?')) return;
+    var res = await fetch('/api/projects/'+id,{method:'DELETE'});
+    var d = await res.json();
+    if (d.success) window.location.href='/projects';
+  }
+</script>
+</body>
+</html>

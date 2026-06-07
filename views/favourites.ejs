@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Favourites — AgentFirst</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=Figtree:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+<style>
+/* ── Reset & Base ────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg:        #09090b;
+  --surface:   #111116;
+  --surface2:  #18181f;
+  --border:    #1f1f2a;
+  --border2:   #2a2a38;
+  --text:      #f0f0f8;
+  --muted:     #5a5a72;
+  --muted2:    #3a3a52;
+  --red:       #ff3f3f;
+  --red-dim:   rgba(255,63,63,.08);
+  --red-glow:  rgba(255,63,63,.18);
+  --radius:    12px;
+  --radius-sm: 7px;
+}
+[data-theme="light"] {
+  --bg:        #fafafb;
+  --surface:   #ffffff;
+  --surface2:  #f3f4f6;
+  --border:    #e5e7eb;
+  --border2:   #d1d5db;
+  --text:      #111827;
+  --muted:     #4b5563;
+  --muted2:    #9ca3af;
+  --red:       #dc2626;
+  --red-dim:   rgba(220,38,38,.08);
+  --red-glow:  rgba(220,38,38,.18);
+}
+html { font-size: 18px; }
+body {
+  font-family: 'Figtree', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+  overflow-x: hidden;
+  transition: background 0.3s, color 0.3s;
+}
+
+/* ── Noise overlay ───────────────────────────── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+  opacity: .025;
+  pointer-events: none;
+  z-index: 0;
+}
+body > * { position: relative; z-index: 1; }
+
+/* ── Topbar ──────────────────────────────────── */
+.topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 32px;
+  height: 56px;
+  border-bottom: 1px solid var(--border);
+  background: rgba(9,9,11,.85);
+  backdrop-filter: blur(16px);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+[data-theme="light"] .topbar {
+  background: rgba(250,250,251,.85);
+}
+
+.brand {
+  font-family: 'Syne', sans-serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--text);
+  text-decoration: none;
+}
+.brand em {
+  font-style: normal;
+  color: var(--red);
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 4px;
+}
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 14px;
+  border-radius: 7px;
+  font-size: 15px;
+  font-weight: 500;
+  color: var(--muted);
+  cursor: pointer;
+  transition: all .15s;
+  text-decoration: none;
+  border: none;
+  background: none;
+  font-family: inherit;
+}
+.nav-item:hover { color: var(--text); background: var(--surface2); }
+.nav-item.active {
+  background: var(--surface2);
+  color: var(--text);
+  border: 1px solid var(--border2);
+}
+.nav-icon { font-size: 14px; }
+
+.topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.theme-btn {
+  width: 34px;
+  height: 34px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 15px;
+  transition: all .15s;
+}
+.theme-btn:hover { color: var(--text); border-color: var(--border2); }
+
+.user-chip {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 5px 12px 5px 6px;
+  cursor: pointer;
+  transition: border-color .15s;
+}
+.user-chip:hover { border-color: var(--border2); }
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 7px;
+  background: var(--red);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  font-family: 'Syne', sans-serif;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.user-name { font-size: 15px; font-weight: 500; }
+
+.logout {
+  height: 34px;
+  padding: 0 16px;
+  border-radius: 8px;
+  border: 1px solid var(--red);
+  background: var(--red-dim);
+  color: var(--red);
+  font-size: 15px;
+  font-weight: 600;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all .15s;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+}
+.logout:hover { background: var(--red); color: #fff; }
+
+/* ── Main ────────────────────────────────────── */
+.main {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 48px 32px 80px;
+}
+
+/* ── Hero ────────────────────────────────────── */
+.hero {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: start;
+  gap: 32px;
+  margin-bottom: 40px;
+}
+.hero-left {}
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  background: var(--red-dim);
+  border: 1px solid var(--red-glow);
+  border-radius: 100px;
+  padding: 4px 12px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--red);
+  letter-spacing: .06em;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.count-badge {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 100px;
+  padding: 4px 13px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--muted);
+  font-family: 'JetBrains Mono', monospace;
+}
+.eyebrow-dot {
+  width: 6px;
+  height: 6px;
+  background: var(--red);
+  border-radius: 50%;
+  box-shadow: 0 0 6px var(--red);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: .4; }
+}
+.hero-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 56px;
+  font-weight: 800;
+  line-height: 1.08;
+  letter-spacing: -.03em;
+  color: var(--text);
+  margin-bottom: 14px;
+}
+.hero-title span { color: var(--red); }
+.hero-sub {
+  font-size: 16.5px;
+  color: var(--muted);
+  line-height: 1.7;
+  max-width: 420px;
+}
+
+/* ── Stats ───────────────────────────────────── */
+.stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  align-items: flex-end;
+}
+.stat-row {
+  display: flex;
+  gap: 2px;
+}
+.stat {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  min-width: 130px;
+  transition: border-color .2s;
+}
+.stat:hover { border-color: var(--border2); }
+.stat-val {
+  font-family: 'Syne', sans-serif;
+  font-size: 36px;
+  font-weight: 800;
+  letter-spacing: -.03em;
+  color: var(--text);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+.stat-val span { color: var(--red); }
+.stat-label {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 500;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+/* ── Filter Bar ────────────────────────────── */
+.filter-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  margin-bottom: 32px;
+}
+.search {
+  flex: 1;
+  position: relative;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  overflow: hidden;
+}
+.search input {
+  width: 100%;
+  height: 44px;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text);
+  padding: 0 16px 0 40px;
+  font-family: inherit;
+  font-size: 15px;
+}
+.search-icon {
+  position: absolute;
+  left: 14px;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--muted);
+  font-size: 14px;
+}
+.filter-actions {
+  display: flex;
+  gap: 8px;
+}
+.filter-btn {
+  height: 44px;
+  padding: 0 16px;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--muted);
+  font-size: 14.5px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all .15s;
+  font-family: inherit;
+}
+.filter-btn:hover {
+  border-color: var(--border2);
+  color: var(--text);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 20px;
+}
+
+/* ── Project Card ────────────────────────────── */
+.project-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+  transition: all .25s;
+}
+.project-card::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: var(--radius);
+  background: radial-gradient(circle at var(--mx,50%) var(--my,50%), rgba(255,63,63,.06) 0%, transparent 60%);
+  opacity: 0;
+  transition: opacity .3s;
+  pointer-events: none;
+}
+.project-card:hover {
+  border-color: var(--border2);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 20px rgba(0,0,0,.15);
+}
+.project-card:hover::after {
+  opacity: 1;
+}
+
+.project-card h3 {
+  font-family: 'Syne', sans-serif;
+  font-size: 21px;
+  font-weight: 700;
+  margin-top: 12px;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.project-card p.desc {
+  font-size: 15px;
+  color: var(--muted);
+  line-height: 1.6;
+  margin-bottom: 0;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.card-tag {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 100px;
+  font-size: 13px;
+  font-weight: 600;
+  margin-top: 12px;
+}
+
+.card-arrow {
+  position: absolute;
+  right: 20px;
+  bottom: 20px;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  transition: all 0.2s;
+}
+.project-card:hover .card-arrow {
+  background: var(--red);
+  border-color: var(--red);
+  color: #fff;
+  transform: rotate(-45deg);
+}
+
+.card-icon {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.card-actions {
+  position: absolute;
+  top: 16px;
+  right: 16px;
+  display: flex;
+  gap: 8px;
+  z-index: 10;
+}
+.card-action-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--muted);
+  font-size: 12px;
+  cursor: pointer;
+  transition: all .15s;
+}
+.card-action-btn:hover {
+  border-color: var(--border2);
+  color: var(--text);
+}
+.card-action-btn.favorite.active {
+  color: var(--red);
+  border-color: var(--red-glow);
+  background: var(--red-dim);
+}
+.card-action-btn.delete:hover {
+  color: var(--red);
+  border-color: var(--red-glow);
+  background: var(--red-dim);
+}
+
+/* ── Empty State ─────────────────────────────── */
+.empty {
+  background: var(--surface);
+  border: 1px dashed var(--border2);
+  border-radius: 20px;
+  padding: 72px 24px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+.empty-icon-wrap {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.empty-icon-bg {
+  position: absolute;
+  inset: 0;
+  border-radius: 18px;
+  background: var(--red-dim);
+  border: 1px solid var(--red-glow);
+}
+.empty-icon {
+  position: relative;
+  font-size: 30px;
+  z-index: 1;
+}
+.section-title {
+  font-family: 'Syne', sans-serif;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: -.02em;
+  color: var(--text);
+}
+.empty-sub {
+  font-size: 16.5px;
+  color: var(--muted);
+  max-width: 340px;
+  line-height: 1.65;
+}
+.empty-cta {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 9px 20px;
+  border-radius: 9px;
+  border: 1px solid var(--border2);
+  background: var(--surface2);
+  color: var(--muted);
+  font-size: 16px;
+  font-weight: 500;
+  font-family: inherit;
+  cursor: pointer;
+  transition: all .15s;
+  margin-top: 4px;
+  text-decoration: none;
+}
+.empty-cta:hover { border-color: var(--red-glow); color: var(--red); }
+
+/* ── Footer ──────────────────────────────────── */
+footer {
+  border-top: 1px solid var(--border);
+  text-align: center;
+  padding: 24px;
+  font-size: 14px;
+  color: var(--muted2);
+}
+footer span { color: var(--muted); }
+
+/* ── Animations ──────────────────────────────── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero      { animation: fadeUp .45s ease both; }
+.filter-bar { animation: fadeUp .5s ease .08s both; }
+.projects  { animation: fadeUp .5s ease .15s both; }
+</style>
+</head>
+<body>
+
+<!-- ── Topbar ── -->
+<header class="topbar">
+  <a class="brand" href="/projects"><em>Agent</em>First</a>
+
+  <nav class="nav">
+    <a class="nav-item" href="/projects">
+      <span class="nav-icon">📁</span> Projects
+    </a>
+    <a class="nav-item active" href="/favourites">
+      <span class="nav-icon">♡</span> Favourites
+    </a>
+  </nav>
+
+  <div class="topbar-right">
+    <button class="theme-btn" id="themeBtn" onclick="toggleTheme()" title="Toggle theme">☀</button>
+    <div class="user-chip">
+      <div class="avatar"><%= userName.charAt(0).toUpperCase() %></div>
+      <span class="user-name"><%= userName %></span>
+    </div>
+    <a href="/logout" class="logout">Logout</a>
+  </div>
+</header>
+
+<!-- ── Main ── -->
+<main class="main">
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-left">
+      <div class="eyebrow">
+        <div class="eyebrow-dot"></div>
+        Saved Bookmarks
+      </div>
+      <h1 class="hero-title">Saved<br><span>Projects.</span></h1>
+      <p class="hero-sub">Access and manage your bookmarked projects in one organized workspace.</p>
+    </div>
+
+    <div class="stats">
+      <div class="stat-row">
+        <div class="stat">
+          <div class="stat-val" id="count-stat-val"><%= projects.length %></div>
+          <div class="stat-label">Saved Items</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Filter Bar -->
+  <div class="filter-bar">
+    <div class="search">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search saved projects..." oninput="filterCards()">
+    </div>
+    <div class="filter-actions">
+      <button class="filter-btn" onclick="sortCards('recent')">Recent</button>
+      <button class="filter-btn" onclick="sortCards('name')">Name</button>
+    </div>
+  </div>
+
+  <!-- Projects -->
+  <section class="projects">
+    <% if (projects.length === 0) { %>
+    <div class="empty">
+      <div class="empty-icon-wrap">
+        <div class="empty-icon-bg"></div>
+        <span class="empty-icon">💔</span>
+      </div>
+      <div class="empty-title">No favourites yet</div>
+      <p class="empty-sub">Click the ♡ on any project to save it here for quick access.</p>
+      <a href="/projects" class="empty-cta">
+        Browse Projects
+      </a>
+    </div>
+    <% } else { %>
+    <div class="grid" id="cards-grid">
+      <% const colors = ['#22c55e', '#3b82f6', '#eab308', '#a855f7', '#ec4899', '#f97316'];
+         const tags = ['Web App', 'AI/ML', 'REST API', 'Python', 'Backend', 'Automation'];
+         projects.forEach((p, i) => { 
+           const color = colors[i % colors.length];
+           const tag = tags[i % tags.length];
+      %>
+      <div class="project-card" id="card-<%= p._id %>" data-title="<%= p.title.toLowerCase() %>" data-date="<%= p.createdAt %>" onmousemove="cardGlow(this,event)">
+        <div class="card-actions">
+          <button class="card-action-btn favorite active" onclick="removeFav('<%= p._id %>'); event.stopPropagation();" title="Remove from favourites">
+            ❤️
+          </button>
+          <button class="card-action-btn delete" onclick="deleteProject('<%= p._id %>'); event.stopPropagation();" title="Delete">
+            🗑️
+          </button>
+        </div>
+        <div onclick="window.location='/projects/<%= p._id %>'" style="cursor:pointer;">
+          <div class="card-arrow">↗</div>
+          <div class="card-icon" style="background: <%= color %>15">
+            <svg viewBox="0 0 24 24" stroke="<%= color %>" width="22" height="22" fill="none" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <rect x="3" y="3" width="7" height="7" rx="1"/>
+              <rect x="14" y="3" width="7" height="7" rx="1"/>
+              <rect x="3" y="14" width="7" height="7" rx="1"/>
+              <rect x="14" y="14" width="7" height="7" rx="1"/>
+            </svg>
+          </div>
+          <span class="card-tag" style="background: <%= color %>15; color: <%= color %>;"><%= tag %></span>
+          <h3><%= p.title.length > 40 ? p.title.slice(0,40)+'…' : p.title %></h3>
+          <p class="desc"><%= p.prompt %></p>
+        </div>
+      </div>
+      <% }); %>
+    </div>
+    <% } %>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 AgentFirst — <span>All rights reserved.</span>
+</footer>
+
+<script>
+function cardGlow(el, e) {
+  const r = el.getBoundingClientRect();
+  el.style.setProperty('--mx', ((e.clientX - r.left) / r.width * 100).toFixed(1) + '%');
+  el.style.setProperty('--my', ((e.clientY - r.top) / r.height * 100).toFixed(1) + '%');
+}
+
+async function removeFav(id) {
+  const res = await fetch(`/api/projects/${id}/favourite`, {method:'POST'});
+  const d   = await res.json();
+  if (d.success && !d.isFavourite) {
+    const card = document.getElementById('card-' + id);
+    card.style.cssText += 'opacity:0;transform:scale(.93) translateY(-4px);transition:all .3s;';
+    setTimeout(() => {
+      card.remove();
+      updateCount();
+      // If no cards left, reload to show empty state
+      if (document.querySelectorAll('.project-card').length === 0) {
+        window.location.reload();
+      }
+    }, 300);
+  }
+}
+
+async function deleteProject(id) {
+  if (!confirm('Delete this project?')) return;
+  const res = await fetch(`/api/projects/${id}`, {method:'DELETE'});
+  const d = await res.json();
+  if (d.success) {
+    const card = document.getElementById('card-'+id);
+    card.style.cssText += 'opacity:0;transform:scale(.94);transition:all .28s;';
+    setTimeout(() => {
+      card.remove();
+      updateCount();
+      // If no cards left, reload to show empty state
+      if (document.querySelectorAll('.project-card').length === 0) {
+        window.location.reload();
+      }
+    }, 280);
+  }
+}
+
+function updateCount() {
+  const remaining = document.querySelectorAll('.project-card').length;
+  const el = document.getElementById('count-stat-val');
+  if (el) el.textContent = remaining;
+}
+
+function filterCards() {
+  const q = document.getElementById('searchInput').value.toLowerCase();
+  document.querySelectorAll('.project-card').forEach(c => {
+    c.style.display = c.dataset.title.includes(q) ? '' : 'none';
+  });
+}
+
+function sortCards(by) {
+  const grid = document.getElementById('cards-grid');
+  if (!grid) return;
+  const cards = [...grid.querySelectorAll('.project-card')];
+  cards.sort((a, b) => {
+    if (by === 'name') return a.dataset.title.localeCompare(b.dataset.title);
+    return new Date(b.dataset.date) - new Date(a.dataset.date);
+  });
+  cards.forEach(c => grid.appendChild(c));
+}
+
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  const newTheme = isDark ? 'light' : 'dark';
+  html.setAttribute('data-theme', newTheme);
+  localStorage.setItem('theme', newTheme);
+  document.getElementById('themeBtn').innerHTML = newTheme === 'dark' ? '☀' : '🌙';
+}
+
+// Initialize theme
+const savedTheme = localStorage.getItem('theme') || 'dark';
+document.documentElement.setAttribute('data-theme', savedTheme);
+document.getElementById('themeBtn').innerHTML = savedTheme === 'dark' ? '☀' : '🌙';
+</script>
+</body>
+</html>

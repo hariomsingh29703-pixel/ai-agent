@@ -1,12 +1,12 @@
 {
-  "name": "chapter-10---airbnb",
+  "name": "ai_agent_skill",
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "tailwind": "tailwindcss -i ./views/input.css -o ./public/output.css --watch",
-    "dev": "nodemon app.js & npm run tailwind",
-    "start": "node app.js"
+    "dev": "([ -f ../antigravity_clone/venv/bin/python ] && ../antigravity_clone/venv/bin/python app.py || python app.py) & npm run tailwind",
+    "start": "[ -f ../antigravity_clone/venv/bin/python ] && ../antigravity_clone/venv/bin/python app.py || python app.py"
   },
   "keywords": [],
   "author": "",
@@ -31,10 +31,14 @@
     "express-validator": "^7.2.1",
     "helmet": "^8.1.0",
     "mongodb": "^6.10.0",
+    "mongodb-memory-server": "^11.1.0",
     "mongoose": "^8.12.1",
     "multer": "^1.4.5-lts.2",
     "mysql2": "^3.11.4",
-    "nodemailer": "^6.9.8",
+    "nedb-promises": "^6.2.3",
+    "nedb-session-store": "^1.1.2",
+    "nodemailer": "^8.0.7",
+    "playwright": "^1.60.0",
     "resend": "^6.7.0"
   }
 }
