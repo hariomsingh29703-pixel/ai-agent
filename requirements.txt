@@ -8,3 +8,7 @@ python-dotenv
 pydantic
 pymongo
 dnspython
+langchain-groq
+langgraph
+playwright
+duckduckgo-search
