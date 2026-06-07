@@ -146,3 +146,6 @@ __pycache__/
 *.pyo
 *.pyd
 .pytest_cache/
+
+# Test scripts
+test_mongo.py

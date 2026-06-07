@@ -37,7 +37,8 @@ app.add_middleware(
 )
 
 # ── Templates setup ──
-templates = Jinja2Templates(directory="views")
+_this_dir = os.path.dirname(os.path.abspath(__file__))
+templates = Jinja2Templates(directory=os.path.join(_this_dir, "views"))
 
 # Custom Jinja2 Filters / Helpers if needed
 templates.env.globals.update(len=len)
