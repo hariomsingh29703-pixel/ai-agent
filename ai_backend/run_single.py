@@ -12,6 +12,9 @@ _this_dir      = os.path.dirname(os.path.abspath(__file__))
 _project_root  = os.path.join(_this_dir, '..')
 _clone_dir     = os.getenv("CLONE_DIR", os.path.abspath(os.path.join(_this_dir, '../../antigravity_clone')))
 
+if not os.path.exists(_clone_dir):
+    _clone_dir = _this_dir
+
 # ── Parse session workspace if present in arguments ──
 if len(sys.argv) > 1:
     import re

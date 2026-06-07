@@ -7,7 +7,7 @@
     "tailwind": "tailwindcss -i ./views/input.css -o ./public/output.css --watch",
     "dev": "([ -f ../antigravity_clone/venv/bin/python ] && ../antigravity_clone/venv/bin/python app.py || python app.py) & npm run tailwind",
     "start": "[ -f ../antigravity_clone/venv/bin/python ] && ../antigravity_clone/venv/bin/python app.py || python app.py",
-    "build": "pip install -r requirements.txt && playwright install chromium"
+    "build": "pip install -r requirements.txt && playwright install --with-deps chromium"
   },
   "keywords": [],
   "author": "",
