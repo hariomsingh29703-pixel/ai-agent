@@ -1,0 +1,26 @@
+# Git
+.git
+.gitignore
+
+# Node
+node_modules/
+npm-debug.log
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# Local dev files
+.env
+*.local
+
+# Screenshots and workspace outputs
+workspace/
+ai_backend/workspace/
+
+# Build artifacts
+client/node_modules/
+client/dist/
